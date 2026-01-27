@@ -1,0 +1,49 @@
+<div *ngIf="loading" class="panel">Loading details...</div>
+<div *ngIf="error" class="panel" style="border-color: rgba(255,92,124,0.35)">{{ error }}</div>
+
+<div *ngIf="food && !loading" class="panel">
+  <div class="row" style="align-items: flex-start; gap: 16px; flex-wrap: wrap">
+    <div
+      class="card"
+      style="width: 360px; max-width: 100%; overflow: hidden; box-shadow: none"
+    >
+      <div
+        class="img"
+        [style.backgroundImage]="
+          'url(' + (food.imageUrl || 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=800&q=60') + ')'
+        "
+        style="height: 220px"
+      ></div>
+    </div>
+
+    <div style="flex: 1; min-width: 260px">
+      <div class="muted">{{ food.category }}</div>
+      <h2 style="margin: 6px 0 4px">{{ food.name }}</h2>
+      <div class="muted" style="max-width: 720px">
+        {{ food.description || 'No description provided.' }}
+      </div>
+
+      <div class="row" style="margin-top: 14px">
+        <div class="price" style="font-size: 20px">₹{{ food.price }}</div>
+        <div class="muted">Available: {{ food.availableQuantity }}</div>
+      </div>
+
+      <div class="row" style="margin-top: 14px; justify-content: flex-start; gap: 10px">
+        <label class="muted">Qty</label>
+        <input class="qty" type="number" min="1" [(ngModel)]="qty" />
+      </div>
+
+      <div class="row" style="margin-top: 16px; justify-content: flex-start; gap: 10px">
+        <a class="btn" routerLink="/">Back</a>
+        <button
+          class="btn primary"
+          (click)="addToCart()"
+          [disabled]="food.availableQuantity === 0"
+        >
+          Add to Cart
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,54 @@
+<div class="row" style="margin: 12px 0 16px">
+  <div>
+    <h2 style="margin: 0">Order Summary</h2>
+    <div class="muted">Your order has been placed successfully.</div>
+  </div>
+  <a class="btn" routerLink="/">Back to Foods</a>
+</div>
+
+<div class="panel">
+  <div *ngIf="loading" class="muted">Loading order...</div>
+  <div *ngIf="error" class="muted" style="color: rgba(255,92,124,0.95)">{{ error }}</div>
+
+  <div *ngIf="!order" class="muted">
+    Order created with ID: <b>{{ orderId }}</b>.
+    <div style="margin-top: 8px">
+      If you refreshed this page and details didn’t load, ensure the backend is running.
+    </div>
+  </div>
+
+  <div *ngIf="order">
+    <div class="row">
+      <div>
+        <div class="muted">Order ID</div>
+        <div style="font-weight: 700">#{{ order.id }}</div>
+      </div>
+      <div style="text-align: right">
+        <div class="muted">Total</div>
+        <div class="price" style="font-size: 18px">₹{{ order.totalAmount }}</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 14px">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Unit Price</th>
+            <th>Line Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of order.items">
+            <td>{{ item.foodName }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>₹{{ item.unitPrice }}</td>
+            <td>₹{{ item.lineTotal }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+

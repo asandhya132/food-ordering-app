@@ -1,0 +1,8 @@
+<app-food-list
+  [foods]="foods"
+  [loading]="loading"
+  [error]="error"
+  (viewDetails)="openDetails($event)"
+  (addToCart)="add($event)"
+></app-food-list>
+

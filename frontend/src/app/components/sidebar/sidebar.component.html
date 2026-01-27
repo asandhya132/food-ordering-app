@@ -1,0 +1,21 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="muted" style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em">
+      Categories
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="sidebar-item muted">Loading...</div>
+  <div *ngIf="error" class="sidebar-item" style="color: rgba(255,92,124,0.95)">{{ error }}</div>
+
+  <button
+    class="sidebar-item"
+    type="button"
+    *ngFor="let cat of categories"
+    [class.active]="isSelected(cat)"
+    (click)="selectCategory(cat)"
+  >
+    {{ cat }}
+  </button>
+</aside>
+
