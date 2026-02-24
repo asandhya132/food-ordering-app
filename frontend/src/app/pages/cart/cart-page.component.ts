@@ -3,6 +3,13 @@ import { Router } from '@angular/router';
 import { CartItem } from '../../models/cart.model';
 import { CartService } from '../../services/cart.service';
 import { OrderService } from '../../services/order.service';
+import { PaymentService } from '../../services/payment.service';
+import { OrderCreateRequest } from '../../models/order.model';
+import { RazorpayOrderCreateResponse } from '../../services/payment.service';
+import { RazorpayVerifyRequest } from '../../services/payment.service';
+
+
+declare var Razorpay: any;
 
 @Component({
   selector: 'app-cart-page',
@@ -15,7 +22,8 @@ export class CartPageComponent {
   constructor(
     public cart: CartService,
     private ordersApi: OrderService,
-    private router: Router
+    private router: Router,
+    private paymentApi: PaymentService
   ) {}
 
   trackByFoodId(_: number, item: CartItem): number {
@@ -35,25 +43,7 @@ export class CartPageComponent {
     this.error = null;
     const items = this.cart.getSnapshot();
     if (items.length === 0) return;
-
-    this.placingOrder = true;
-    const payload = {
-      items: items.map((i) => ({ foodId: i.food.id, quantity: i.quantity }))
-    };
-
-    this.ordersApi.createOrder(payload).subscribe({
-      next: (order) => {
-        this.cart.clear();
-        this.placingOrder = false;
-        this.router.navigate(['/order-summary', order.id], { state: { order } });
-      },
-      error: (err) => {
-        this.placingOrder = false;
-        this.error =
-          err?.error?.message ||
-          'Failed to place order. Check available stock and backend logs.';
-      }
-    });
+    this.router.navigate(['/checkout']);
   }
 }
 

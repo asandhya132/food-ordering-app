@@ -29,8 +29,11 @@ public class OrderServiceImpl implements OrderService {
       throw new BadRequestException("Order must contain at least one item");
     }
 
-    Order order = Order.builder().items(new ArrayList<>()).totalAmount(BigDecimal.ZERO).build();
-
+Order order = Order.builder()
+    .items(new ArrayList<>())
+    .totalAmount(BigDecimal.ZERO)
+    .status("CREATED")
+    .build();
     BigDecimal total = BigDecimal.ZERO;
 
     for (OrderCreateRequest.OrderItemRequest reqItem : request.getItems()) {

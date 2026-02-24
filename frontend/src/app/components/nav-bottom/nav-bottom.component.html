@@ -1,0 +1,45 @@
+<nav class="bottom-nav">
+  <!-- Home -->
+  <a
+    class="bottom-nav-item"
+    routerLink="/"
+    routerLinkActive="bottom-nav-item-active"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
+    <span class="material-icons">home</span>
+    <span>Home</span>
+  </a>
+
+  <!-- Foods (alias to home) -->
+  <a
+    class="bottom-nav-item"
+    routerLink="/"
+    routerLinkActive="bottom-nav-item-active"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
+    <span class="material-icons">restaurant_menu</span>
+    <span>Foods</span>
+  </a>
+
+  <!-- Cart -->
+  <a
+    class="bottom-nav-item"
+    routerLink="/cart"
+    routerLinkActive="bottom-nav-item-active"
+  >
+    <span class="material-icons">shopping_cart</span>
+    <span>Cart</span>
+    <span class="bottom-nav-badge">{{ cart.totalItems$ | async }}</span>
+  </a>
+
+  <!-- Profile -->
+  <a
+    class="bottom-nav-item"
+    routerLink="/profile"
+    routerLinkActive="bottom-nav-item-active"
+  >
+    <span class="material-icons">person</span>
+    <span>Profile</span>
+  </a>
+</nav>
+

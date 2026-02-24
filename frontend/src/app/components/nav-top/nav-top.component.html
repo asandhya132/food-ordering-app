@@ -1,0 +1,55 @@
+<div class="topbar">
+  <div class="container inner">
+    <a class="brand" routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+      <span>Food Ordering App</span>
+      <span class="badge">Beginner-friendly</span>
+    </a>
+
+    <nav class="nav-links">
+      <!-- Home -->
+      <a
+        class="btn"
+        routerLink="/"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Home
+      </a>
+
+      <!-- Foods (alias to home or /foods list) -->
+      <a
+        class="btn"
+        routerLink="/"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Foods
+      </a>
+
+      <!-- Cart with live item count -->
+      <a
+        class="btn primary"
+        routerLink="/cart"
+        routerLinkActive="active-link"
+      >
+        Cart
+        <span class="badge">{{ cart.totalItems$ | async }}</span>
+      </a>
+
+      <!-- Orders link (placeholder route) -->
+      <a
+        class="btn"
+        routerLink="/orders"
+        routerLinkActive="active-link"
+      >
+        Orders
+      </a>
+
+      <!-- Login/Profile icon area -->
+      <button class="btn" type="button">
+        <span class="material-icons">account_circle</span>
+      </button>
+    </nav>
+  </div>
+</div>
+

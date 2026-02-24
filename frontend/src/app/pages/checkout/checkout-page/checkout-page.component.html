@@ -1,0 +1,169 @@
+<p>checkout-page works!</p>
+<div class="row" style="margin: 12px 0 16px">
+    <div>
+      <h2 style="margin: 0">Checkout</h2>
+      <div class="muted">Enter your details and choose a payment method.</div>
+    </div>
+  </div>
+  
+  <div class="panel" *ngIf="error" style="border-color: rgba(255,92,124,0.35); margin-bottom: 12px">
+    {{ error }}
+  </div>
+  
+   <form [formGroup]="form" novalidate>
+ <div class="checkout-layout">
+    <!-- LEFT: Customer details form -->
+    <div class="checkout-left">
+     
+        <div class="field-row">
+          <label>First Name</label>
+          <input type="text" formControlName="firstName" />
+          <div class="danger" *ngIf="f['firstName'].touched && f['firstName'].invalid">
+            First name is required.
+          </div>
+        </div>
+  
+        <div class="field-row">
+          <label>Last Name</label>
+          <input type="text" formControlName="lastName" />
+          <div class="danger" *ngIf="f['lastName'].touched && f['lastName'].invalid">
+            Last name is required.
+          </div>
+        </div>
+  
+        <div class="field-row">
+          <label>Email</label>
+          <input type="email" formControlName="email" />
+          <div class="danger" *ngIf="f['email'].touched && f['email'].invalid">
+            Enter a valid email address.
+          </div>
+        </div>
+  
+        <div class="field-row">
+          <label>Phone Number</label>
+          <input type="tel" formControlName="phone" />
+          <div class="danger" *ngIf="f['phone'].touched && f['phone'].invalid">
+            Enter a valid 10‑digit phone number.
+          </div>
+        </div>
+  
+        <div class="field-row">
+          <label>Address</label>
+          <textarea rows="3" formControlName="address"></textarea>
+          <div class="danger" *ngIf="f['address'].touched && f['address'].invalid">
+            Address is required.
+          </div>
+        </div>
+      
+    </div>
+  
+    <!-- RIGHT: Payment methods + summary -->
+    <div class="checkout-right">
+      <div class="panel" style="margin-bottom: 12px">
+        <div class="muted" style="margin-bottom: 6px">Payment Method</div>
+  
+        <!-- All payment methods are visible; radios share the same form control -->
+        <div *ngFor="let method of paymentMethods" style="margin-bottom: 6px">
+          <label>
+            <input
+              type="radio"
+              name="paymentMethod"
+              [value]="method"
+              formControlName="paymentMethod"
+            />
+            <span style="margin-left: 6px">{{ method }}</span>
+            <span *ngIf="method === 'Razorpay'" class="badge" style="margin-left: 4px">
+              Recommended
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Payment-method specific fields -->
+      <div class="panel" style="margin-bottom: 12px" *ngIf="form.get('paymentMethod')!.value === 'Credit Card'">
+        <div class="muted" style="margin-bottom: 6px">Credit Card Details</div>
+        <div class="field-row">
+          <label>Name on Card</label>
+          <input type="text" formControlName="cardName" />
+          <div class="danger" *ngIf="f['cardName'].touched && f['cardName'].invalid">
+            Cardholder name is required.
+          </div>
+        </div>
+        <div class="field-row">
+          <label>Card Number</label>
+          <input type="text" maxlength="16" formControlName="cardNumber" />
+          <div class="danger" *ngIf="f['cardNumber'].touched && f['cardNumber'].invalid">
+            Enter a valid 16-digit card number.
+          </div>
+        </div>
+        <div class="field-row" style="flex-direction: row; gap: 8px">
+          <div style="flex: 1">
+            <label>Expiry (MM/YY)</label>
+            <input type="text" maxlength="5" formControlName="cardExpiry" />
+            <div class="danger" *ngIf="f['cardExpiry'].touched && f['cardExpiry'].invalid">
+              Enter a valid expiry (MM/YY).
+            </div>
+          </div>
+          <div style="flex: 1">
+            <label>CVV</label>
+            <input type="password" maxlength="3" formControlName="cardCvv" />
+            <div class="danger" *ngIf="f['cardCvv'].touched && f['cardCvv'].invalid">
+              Enter a valid 3-digit CVV.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom: 12px" *ngIf="form.get('paymentMethod')!.value === 'UPI'">
+        <div class="muted" style="margin-bottom: 6px">UPI Details</div>
+        <div class="field-row">
+          <label>UPI ID</label>
+          <input type="text" formControlName="upiId" />
+          <div class="danger" *ngIf="f['upiId'].touched && f['upiId'].invalid">
+            UPI ID is required.
+          </div>
+        </div>
+      </div>
+  
+      <div class="panel">
+        <div class="muted" style="margin-bottom: 8px">Order Summary</div>
+  
+        <div *ngIf="!items.length" class="muted">Your cart is empty.</div>
+  
+        <table class="table" *ngIf="items.length">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th style="width: 60px">Qty</th>
+              <th style="width: 80px">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of items">
+              <td>{{ item.food.name }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>₹{{ item.quantity * item.food.price }}</td>
+            </tr>
+          </tbody>
+        </table>
+  
+        <div class="row" style="margin-top: 10px" *ngIf="items.length">
+          <div class="muted">Total</div>
+          <div class="price">₹{{ total }}</div>
+        </div>
+  
+        <div class="row" style="margin-top: 14px">
+          <button class="btn" routerLink="/cart">Back to Cart</button>
+          <button
+            class="btn primary"
+            (click)="proceedToPay()"
+            [disabled]="placing || form.invalid || !items.length || !isPaymentSectionValid()"
+          >
+            {{ placing ? 'Processing...' : 'Proceed to Pay' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+   </form>
+ 

@@ -25,6 +25,23 @@ public class Order {
   @Column(nullable = false, precision = 10, scale = 2)
   private BigDecimal totalAmount;
 
+  /**
+   * Backward-compatible: existing DB rows may have NULL after schema update.
+   * We set a default in {@link #prePersist()} for new rows and allow NULL at DB level
+   * until a one-time backfill is applied.
+   */
+  @Column(length = 20)
+  private String status; // CREATED, PAID, FAILED
+
+@Column(length = 100)
+private String razorpayOrderId;
+
+@Column(length = 100)
+private String razorpayPaymentId;
+
+@Column(length = 255)
+private String razorpaySignature;
+
   @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
   private List<OrderItem> items = new ArrayList<>();
@@ -33,6 +50,9 @@ public class Order {
   public void prePersist() {
     if (createdAt == null) {
       createdAt = OffsetDateTime.now();
+    }
+    if (status == null || status.isBlank()) {
+      status = "CREATED";
     }
   }
 }

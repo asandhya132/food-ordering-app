@@ -55,9 +55,5 @@ export class FoodListPageComponent implements OnInit, OnDestroy {
   openDetails(food: Food): void {
     this.router.navigate(['/foods', food.id]);
   }
-
-  add(food: Food): void {
-    this.cart.addToCart(food, 1);
-  }
 }
 

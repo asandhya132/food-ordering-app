@@ -28,6 +28,10 @@ public class OrderResponse {
     private Integer quantity;
     private BigDecimal unitPrice;
     private BigDecimal lineTotal;
+    private String status;
+    private String razorpayOrderId;
+    private String razorpayPaymentId;
+    private String razorpaySignature;
   }
 }
 

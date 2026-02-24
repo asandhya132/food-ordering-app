@@ -1,26 +1,10 @@
-<div class="topbar">
-  <div class="container inner">
-    <a class="brand" routerLink="/">
-      <span>Food Ordering App</span>
-      <span class="badge">Beginner-friendly</span>
-    </a>
-
-    <div class="row">
-      <button class="btn" type="button" (click)="toggleSidebar()" id="sidebar-toggle">
-        Categories
-      </button>
-      <a class="btn" routerLink="/">Foods</a>
-      <a class="btn primary" routerLink="/cart">
-        Cart
-        <span class="badge">{{ cart.totalItems$ | async }}</span>
-      </a>
-    </div>
-  </div>
-</div>
+<!-- Top navigation bar: shared across all pages -->
+<app-nav-top></app-nav-top>
 
 <div class="container layout">
-  <div class="layout-body" [class.sidebar-collapsed]="!sidebarOpen">
-    <div class="layout-sidebar">
+  <div class="layout-body" [class.sidebar-collapsed]="!sidebarOpen || !showSidebar">
+    <!-- Sidebar is rendered only on food list routes -->
+    <div class="layout-sidebar" *ngIf="showSidebar">
       <app-sidebar></app-sidebar>
     </div>
     <div class="layout-content">
@@ -28,4 +12,7 @@
     </div>
   </div>
 </div>
+
+<!-- Bottom navigation bar: mobile-only via CSS -->
+<app-nav-bottom></app-nav-bottom>
 
