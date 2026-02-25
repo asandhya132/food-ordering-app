@@ -13,8 +13,10 @@ import { OrderSummaryPageComponent } from './pages/order-summary/order-summary-p
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { FoodListComponent } from './components/food-list/food-list.component';
 import { CheckoutPageComponent } from './pages/checkout/checkout-page/checkout-page.component';
+import { HomePageComponent } from './pages/home/home-page.component';
 import { NavTopComponent } from './components/nav-top/nav-top.component';
 import { NavBottomComponent } from './components/nav-bottom/nav-bottom.component';
+import { FooterMainComponent } from './components/footer-main/footer-main.component';
 
 @NgModule({
   declarations: [
@@ -26,8 +28,10 @@ import { NavBottomComponent } from './components/nav-bottom/nav-bottom.component
     SidebarComponent,
     FoodListComponent,
     CheckoutPageComponent,
+    HomePageComponent,
     NavTopComponent,
-    NavBottomComponent
+    NavBottomComponent,
+    FooterMainComponent
   ],
   imports: [BrowserModule, HttpClientModule, FormsModule, ReactiveFormsModule, RouterModule, AppRoutingModule],
   providers: [],

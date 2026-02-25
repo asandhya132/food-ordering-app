@@ -17,13 +17,13 @@ export class AppComponent {
     public cart: CartService,
     private router: Router
   ) {
-    // Listen to navigation changes and show sidebar ONLY on food listing routes.
+    // Listen to navigation changes and show sidebar ONLY on food listing routes (/foods).
     this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe((e) => {
         const url = e.urlAfterRedirects || e.url;
-        // Sidebar visible only on home ('/') and food detail/list pages.
-        this.showSidebar = url === '/' || url.startsWith('/foods');
+        // Sidebar visible only on food list/detail pages.
+        this.showSidebar = url.startsWith('/foods');
       });
   }
 

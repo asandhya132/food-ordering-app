@@ -5,12 +5,14 @@ import { FoodDetailsPageComponent } from './pages/food-details/food-details-page
 import { CartPageComponent } from './pages/cart/cart-page.component';
 import { OrderSummaryPageComponent } from './pages/order-summary/order-summary-page.component';
 import { CheckoutPageComponent } from './pages/checkout/checkout-page/checkout-page.component';
+import { HomePageComponent } from './pages/home/home-page.component';
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', component: FoodListPageComponent },
+  { path: '', pathMatch: 'full', component: HomePageComponent },
+  { path: 'foods', component: FoodListPageComponent },
   { path: 'foods/:id', component: FoodDetailsPageComponent },
   { path: 'cart', component: CartPageComponent },
-  { path: 'checkout', component: CheckoutPageComponent },   // ✅ new
+  { path: 'checkout', component: CheckoutPageComponent },
   { path: 'order-summary/:orderId', component: OrderSummaryPageComponent },
   { path: '**', redirectTo: '' }
 ];

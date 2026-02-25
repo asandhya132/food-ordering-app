@@ -1,0 +1,94 @@
+<!-- HERO CAROUSEL -->
+<section class="hero">
+  <div
+    class="hero-slide"
+    *ngFor="let slide of heroSlides; let i = index"
+    [class.hero-slide-active]="i === currentSlide"
+    [style.backgroundImage]="'url(' + slide.imageUrl + ')'"
+  >
+    <div class="hero-overlay">
+      <div class="hero-content">
+        <h1>{{ slide.title }}</h1>
+        <p>{{ slide.subtitle }}</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="hero-nav hero-nav-left" type="button" (click)="prevSlide()">
+    <span class="material-icons">chevron_left</span>
+  </button>
+  <button class="hero-nav hero-nav-right" type="button" (click)="nextSlide()">
+    <span class="material-icons">chevron_right</span>
+  </button>
+
+  <div class="hero-dots">
+    <button
+      *ngFor="let slide of heroSlides; let i = index"
+      type="button"
+      class="hero-dot"
+      [class.active]="i === currentSlide"
+      (click)="currentSlide = i"
+    ></button>
+  </div>
+</section>
+
+<!-- CATEGORIES CAROUSEL -->
+<section class="panel" style="margin-top: 18px">
+  <div class="row" style="margin-bottom: 10px">
+    <h2 style="margin: 0; font-size: 18px">Shop by Category</h2>
+  </div>
+
+  <div class="category-carousel-wrapper">
+    <button
+      class="carousel-arrow left"
+      type="button"
+      (click)="scrollCategories('left', catScroll)"
+    >
+      <span class="material-icons">chevron_left</span>
+    </button>
+
+    <div class="category-carousel" #catScroll>
+      <div
+        class="category-card"
+        *ngFor="let cat of categories"
+        (click)="openCategory(cat)"
+      >
+        <div
+          class="category-image"
+          [style.backgroundImage]="'url(' + cat.imageUrl + ')'"
+        ></div>
+        <div class="category-name">{{ cat.name }}</div>
+      </div>
+    </div>
+
+    <button
+      class="carousel-arrow right"
+      type="button"
+      (click)="scrollCategories('right', catScroll)"
+    >
+      <span class="material-icons">chevron_right</span>
+    </button>
+  </div>
+</section>
+
+<!-- FEATURE CARDS -->
+<section class="feature-cards">
+  <div class="feature-card">
+    <span class="material-icons">support_agent</span>
+    <h3>Contact Us</h3>
+    <p>Need help with your order or have a custom request? Our team is just a message away.</p>
+  </div>
+
+  <div class="feature-card">
+    <span class="material-icons">local_shipping</span>
+    <h3>Free Delivery</h3>
+    <p>Enjoy free doorstep delivery on qualifying orders within your city.</p>
+  </div>
+
+  <div class="feature-card">
+    <span class="material-icons">local_offer</span>
+    <h3>Today’s Offers</h3>
+    <p>Discover limited-time deals on your favourite pickles and sweets.</p>
+  </div>
+</section>
+

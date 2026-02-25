@@ -1,11 +1,23 @@
 <div class="topbar">
   <div class="container inner">
-    <a class="brand" routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
-      <span>Food Ordering App</span>
-      <span class="badge">Beginner-friendly</span>
+    <!-- LEFT: App name / logo -->
+    <a
+      class="brand"
+      routerLink="/"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <span>Pickle Store</span>
+      <span class="badge">Food Ordering App</span>
     </a>
 
+    <!-- RIGHT: Navigation with icons -->
     <nav class="nav-links">
+      <!-- Search icon (placeholder for future search page) -->
+      <button class="btn" type="button">
+        <span class="material-icons">search</span>
+      </button>
+
       <!-- Home -->
       <a
         class="btn"
@@ -13,17 +25,18 @@
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{ exact: true }"
       >
-        Home
+        <span class="material-icons">home</span>
+        <span>Home</span>
       </a>
 
-      <!-- Foods (alias to home or /foods list) -->
+      <!-- Foods -->
       <a
         class="btn"
-        routerLink="/"
+        routerLink="/foods"
         routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
       >
-        Foods
+        <span class="material-icons">restaurant_menu</span>
+        <span>Foods</span>
       </a>
 
       <!-- Cart with live item count -->
@@ -32,23 +45,20 @@
         routerLink="/cart"
         routerLinkActive="active-link"
       >
-        Cart
+        <span class="material-icons">shopping_cart</span>
+        <span>Cart</span>
         <span class="badge">{{ cart.totalItems$ | async }}</span>
       </a>
 
-      <!-- Orders link (placeholder route) -->
+      <!-- Login/Profile (placeholder) -->
       <a
         class="btn"
-        routerLink="/orders"
+        routerLink="/login"
         routerLinkActive="active-link"
       >
-        Orders
-      </a>
-
-      <!-- Login/Profile icon area -->
-      <button class="btn" type="button">
         <span class="material-icons">account_circle</span>
-      </button>
+        <span>Login</span>
+      </a>
     </nav>
   </div>
 </div>

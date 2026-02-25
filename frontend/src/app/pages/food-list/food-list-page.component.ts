@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Food } from '../../models/food.model';
 import { CartService } from '../../services/cart.service';
@@ -21,16 +21,24 @@ export class FoodListPageComponent implements OnInit, OnDestroy {
     private foodsApi: FoodService,
     private cart: CartService,
     private router: Router,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    // Apply category from route query param when landing from Home category cards
+    this.route.queryParams.subscribe((params) => {
+      const cat = params['category'] as string | undefined;
+      if (cat) {
+        this.categoryService.setSelectedCategory(cat);
+      } else if (this.categoryService.getSelectedCategorySnapshot() == null) {
+        this.categoryService.setSelectedCategory(null);
+      }
+    });
+
     this.categorySub = this.categoryService.selectedCategory$.subscribe((category) => {
       this.fetchFoods(category);
     });
-
-    // initial load (in case sidebar hasn't emitted yet)
-    this.fetchFoods(this.categoryService.getSelectedCategorySnapshot());
   }
 
   ngOnDestroy(): void {
