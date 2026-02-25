@@ -25,19 +25,46 @@
     <div class="content">
       <div class="row">
         <div style="font-weight: 700">{{ food.name }}</div>
-        <div class="price">₹{{ food.price }}</div>
+        <div class="price">₹{{ getDisplayPrice(food) }}</div>
       </div>
       <div class="muted" style="margin-top: 4px">{{ food.category }}</div>
 
       <div class="row" style="margin-top: 12px; align-items: center">
         <button class="btn" (click)="onDetails(food)">Details</button>
 
+        <!-- Weight Selection -->
+<div class="d-flex" style="gap: 8px; margin-top: 8px">
+  <button
+    class="btn weight-btn"
+    [class.active]="getSelectedWeight(food) === '250g'"
+    (click)="selectWeight(food, '250g')"
+  >
+    250g
+  </button>
+
+  <button
+    class="btn weight-btn"
+    [class.active]="getSelectedWeight(food) === '500g'"
+    (click)="selectWeight(food, '500g')"
+  >
+    500g
+  </button>
+
+  <button
+    class="btn weight-btn"
+    [class.active]="getSelectedWeight(food) === '1kg'"
+    (click)="selectWeight(food, '1kg')"
+  >
+    1kg
+  </button>
+</div>
+
         <!-- Show Add to Cart if not in cart or quantity is 0 -->
         <ng-container *ngIf="getQuantity(food) === 0; else qtyControls">
           <button
             class="btn primary"
             (click)="onAdd(food)"
-            [disabled]="food.availableQuantity === 0"
+           [disabled]="!getSelectedWeight(food) || food.availableQuantity === 0"
           >
             Add to Cart
           </button>
@@ -45,7 +72,7 @@
 
         <!-- Quantity controls when item is already in cart -->
         <ng-template #qtyControls>
-          <div class="row" style="gap: 8px; align-items: center">
+          <div class="d-flex" style="gap: 8px; align-items: center">
             <button class="btn" (click)="decrement(food)">-</button>
             <input
               class="qty"

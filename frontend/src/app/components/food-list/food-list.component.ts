@@ -1,9 +1,10 @@
 // food-list.component.ts
 import { Component, EventEmitter, Input, Output, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Food } from '../../models/food.model';
+import { Food, FoodWeight } from '../../models/food.model';
 import { CartService } from '../../services/cart.service';
 import { CartItem } from '../../models/cart.model';
+
 
 @Component({
   selector: 'app-food-list',
@@ -20,8 +21,26 @@ export class FoodListComponent implements OnInit, OnDestroy {
   // Local per-item quantity state keyed by food.id
   private quantities = new Map<number, number>();
   private sub?: Subscription;
+  priceMultiplier: Record<FoodWeight, number> = {
+  '250g': 1,
+  '500g': 2,
+  '1kg': 4
+};
 
   constructor(private readonly cart: CartService) {}
+
+selectedWeights: Record<number, FoodWeight> = {};
+selectWeight(food: Food, weight: FoodWeight) {
+  this.selectedWeights[food.id] = weight;
+}
+getSelectedWeight(food: Food): FoodWeight | undefined {
+  return this.selectedWeights[food.id];
+}
+
+getDisplayPrice(food: Food): number {
+  const weight = this.getSelectedWeight(food) ?? '250g';
+  return food.price * this.priceMultiplier[weight];
+}
 
   ngOnInit(): void {
     // Keep local quantity map in sync with cart items
@@ -48,11 +67,27 @@ export class FoodListComponent implements OnInit, OnDestroy {
 
   // Add to cart starts at quantity 1
   onAdd(food: Food): void {
-    if (food.availableQuantity <= 0) {
-      return;
-    }
-    this.cart.addToCart(food, 1);
+  if (food.availableQuantity <= 0) {
+    return;
   }
+  
+  const selectedWeight = this.getSelectedWeight(food);
+  if (!selectedWeight) {
+    return; // weight not selected → block add to cart
+  }
+   const finalPrice =
+    food.price * this.priceMultiplier[selectedWeight];
+
+
+ this.cart.addToCart(
+    {
+      ...food,
+      selectedWeight,
+      price: finalPrice
+    },
+    1
+  );
+}
 
   // Increase quantity by 1 up to availableQuantity
   increment(food: Food): void {
