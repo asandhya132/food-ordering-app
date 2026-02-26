@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Food } from '../../models/food.model';
+import { Food, FoodWeight } from '../../models/food.model';
 import { CartService } from '../../services/cart.service';
 import { FoodService } from '../../services/food.service';
 
@@ -13,6 +13,9 @@ export class FoodDetailsPageComponent implements OnInit {
   loading = true;
   error: string | null = null;
   qty = 1;
+
+    // ✅ ADD THIS
+  selectedWeight: FoodWeight | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -42,10 +45,25 @@ export class FoodDetailsPageComponent implements OnInit {
   }
 
   addToCart(): void {
-    if (!this.food) return;
-    const safeQty = Math.max(1, Math.floor(this.qty || 1));
-    this.cart.addToCart(this.food, safeQty);
-    this.router.navigate(['/cart']);
+  if (!this.food) return;
+
+  // ❗ enforce weight selection
+  if (!this.selectedWeight) {
+    this.error = 'Please select a weight.';
+    return;
   }
+
+  const safeQty = Math.max(1, Math.floor(this.qty || 1));
+
+  this.cart.addToCart(
+    {
+      ...this.food,
+      selectedWeight: this.selectedWeight
+    },
+    safeQty
+  );
+
+  this.router.navigate(['/cart']);
+}
 }
 

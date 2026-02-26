@@ -9,46 +9,72 @@ export class CartService {
   readonly items$ = this.itemsSubject.asObservable();
 
   readonly totalItems$ = this.items$.pipe(
-    map((items) => items.reduce((sum, i) => sum + i.quantity, 0))
+    map(items => items.reduce((sum, i) => sum + i.quantity, 0))
   );
 
   readonly totalPrice$ = this.items$.pipe(
-    map((items) => items.reduce((sum, i) => sum + i.quantity * i.food.price, 0))
+    map(items => items.reduce((sum, i) => sum + i.quantity * i.food.price, 0))
   );
+
+  // 🔑 unique key
+  private getKey(foodId: number, weight: string): string {
+    return `${foodId}_${weight}`;
+  }
 
   getSnapshot(): CartItem[] {
     return this.itemsSubject.value;
   }
 
-  addToCart(food: Food, quantity: number = 1): void {
+  // ➕ add / increment
+  addToCart(food: Food & { selectedWeight: string }, quantity = 1): void {
+    const key = this.getKey(food.id, food.selectedWeight);
     const current = this.itemsSubject.value;
-    const existing = current.find((x) => x.food.id === food.id);
+
+    const existing = current.find(item => item.key === key);
 
     if (existing) {
-      this.updateQuantity(food.id, existing.quantity + quantity);
+      this.updateQuantityByKey(key, existing.quantity + quantity);
       return;
     }
 
-    this.itemsSubject.next([...current, { food, quantity }]);
+    this.itemsSubject.next([
+      ...current,
+      {
+        key,
+        food,
+        selectedWeight: food.selectedWeight as any,
+        quantity
+      }
+    ]);
   }
 
-  updateQuantity(foodId: number, quantity: number): void {
+  // ✏️ update
+  updateQuantityByKey(key: string, quantity: number): void {
     const next = this.itemsSubject.value
-      .map((item) => {
-        if (item.food.id !== foodId) return item;
-        return { ...item, quantity };
-      })
-      .filter((item) => item.quantity > 0);
+      .map(item =>
+        item.key === key ? { ...item, quantity } : item
+      )
+      .filter(item => item.quantity > 0);
 
     this.itemsSubject.next(next);
   }
 
-  removeItem(foodId: number): void {
-    this.itemsSubject.next(this.itemsSubject.value.filter((i) => i.food.id !== foodId));
+  // ➖ decrement
+  decrementByKey(key: string): void {
+    const item = this.itemsSubject.value.find(i => i.key === key);
+    if (!item) return;
+
+    this.updateQuantityByKey(key, item.quantity - 1);
+  }
+
+  // ❌ remove
+  removeItemByKey(key: string): void {
+    this.itemsSubject.next(
+      this.itemsSubject.value.filter(i => i.key !== key)
+    );
   }
 
   clear(): void {
     this.itemsSubject.next([]);
   }
 }
-

@@ -1,9 +1,18 @@
 <p>checkout-page works!</p>
 <div class="row" style="margin: 12px 0 16px">
-    <div>
-      <h2 style="margin: 0">Checkout</h2>
-      <div class="muted">Enter your details and choose a payment method.</div>
-    </div>
+    <div class="d-flex p-0">
+      <button
+    class="btn"
+    style="padding: 6px 10px"
+    routerLink="/cart"
+    aria-label="Back to Cart"
+  >
+    ←
+  </button>
+      <h2 class="ps-3 m-0">Checkout</h2>
+      </div>
+      <div class="muted p-0">Enter your details and choose a payment method.</div>
+    
   </div>
   
   <div class="panel" *ngIf="error" style="border-color: rgba(255,92,124,0.35); margin-bottom: 12px">
@@ -140,7 +149,12 @@
           </thead>
           <tbody>
             <tr *ngFor="let item of items">
-              <td>{{ item.food.name }}</td>
+              <td>
+  {{ item.food.name }}
+  <span *ngIf="item.food.selectedWeight" class="muted">
+    ({{ item.food.selectedWeight }})
+  </span>
+</td>
               <td>{{ item.quantity }}</td>
               <td>₹{{ item.quantity * item.food.price }}</td>
             </tr>

@@ -4,10 +4,6 @@ import { CartItem } from '../../models/cart.model';
 import { CartService } from '../../services/cart.service';
 import { OrderService } from '../../services/order.service';
 import { PaymentService } from '../../services/payment.service';
-import { OrderCreateRequest } from '../../models/order.model';
-import { RazorpayOrderCreateResponse } from '../../services/payment.service';
-import { RazorpayVerifyRequest } from '../../services/payment.service';
-
 
 declare var Razorpay: any;
 
@@ -26,24 +22,27 @@ export class CartPageComponent {
     private paymentApi: PaymentService
   ) {}
 
-  trackByFoodId(_: number, item: CartItem): number {
-    return item.food.id;
+  // ✅ use key, not foodId
+  trackByKey(_: number, item: CartItem): string {
+    return item.key;
   }
 
-  updateQty(foodId: number, qty: string): void {
+  // ✅ item is passed from template
+  updateQty(item: CartItem, qty: string): void {
     const n = Math.max(0, Math.floor(Number(qty)));
-    this.cart.updateQuantity(foodId, n);
+    this.cart.updateQuantityByKey(item.key, n);
   }
 
-  remove(foodId: number): void {
-    this.cart.removeItem(foodId);
+  // ✅ remove by key
+  remove(item: CartItem): void {
+    this.cart.removeItemByKey(item.key);
   }
 
   placeOrder(): void {
     this.error = null;
     const items = this.cart.getSnapshot();
     if (items.length === 0) return;
+
     this.router.navigate(['/checkout']);
   }
 }
-

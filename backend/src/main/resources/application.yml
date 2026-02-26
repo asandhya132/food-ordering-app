@@ -20,6 +20,6 @@ app:
 
 # Razorpay credentials (use environment variables; do not hardcode real secrets)
 razorpay:
-  key-id: $rzp_test_SJw3TRIfgPBQbK
-  key-secret: $FCuDPeCjhF6RlMPnstc2L0Au
+  key-id: rzp_test_SJw3TRIfgPBQbK
+  key-secret: FCuDPeCjhF6RlMPnstc2L0Au
 

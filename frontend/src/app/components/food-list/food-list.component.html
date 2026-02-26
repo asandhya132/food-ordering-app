@@ -33,7 +33,7 @@
         <button class="btn" (click)="onDetails(food)">Details</button>
 
         <!-- Weight Selection -->
-<div class="d-flex" style="gap: 8px; margin-top: 8px">
+<div class="d-flex justify-content-center" style="gap: 8px; margin-top: 8px">
   <button
     class="btn weight-btn"
     [class.active]="getSelectedWeight(food) === '250g'"
@@ -63,7 +63,7 @@
         <ng-container *ngIf="getQuantity(food) === 0; else qtyControls">
           <button
             class="btn primary"
-            (click)="onAdd(food)"
+            (click)="onAdd(food); $event.stopPropagation()"
            [disabled]="!getSelectedWeight(food) || food.availableQuantity === 0"
           >
             Add to Cart
@@ -72,7 +72,7 @@
 
         <!-- Quantity controls when item is already in cart -->
         <ng-template #qtyControls>
-          <div class="d-flex" style="gap: 8px; align-items: center">
+          <div class="d-flex justify-content-center" style="gap: 8px; align-items: center">
             <button class="btn" (click)="decrement(food)">-</button>
             <input
               class="qty"
@@ -90,6 +90,26 @@
           </div>
         </ng-template>
       </div>
+    </div>
+  </div>
+</div>
+<!-- Add-to-cart success popup -->
+<div class="popup-backdrop" *ngIf="showAddPopup">
+  <div class="popup">
+    <h4 class="m-0">Added to Cart</h4>
+
+    <p class="muted" style="margin-top: 8px">
+      {{ lastAddedFoodName }} was successfully added to your cart.
+    </p>
+
+    <div class="row" style="margin-top: 16px; gap: 10px">
+      <button class="btn" (click)="showAddPopup = false">
+        Continue Shopping
+      </button>
+
+      <a class="btn primary" routerLink="/cart">
+        View Cart
+      </a>
     </div>
   </div>
 </div>

@@ -81,6 +81,57 @@ Order order = Order.builder()
   }
 
   @Override
+  public Order createOrderEntity(OrderCreateRequest request) {
+
+      if (request.getItems() == null || request.getItems().isEmpty()) {
+          throw new BadRequestException("Order must contain at least one item");
+      }
+
+      Order order = Order.builder()
+          .items(new ArrayList<>())
+          .totalAmount(BigDecimal.ZERO)
+          .status("CREATED")
+          .build();
+
+      BigDecimal total = BigDecimal.ZERO;
+
+      for (OrderCreateRequest.OrderItemRequest reqItem : request.getItems()) {
+
+          Food food = foodRepository.findById(reqItem.getFoodId())
+              .orElseThrow(() ->
+                  new NotFoundException("Food not found: id=" + reqItem.getFoodId())
+              );
+
+          int requestedQty = reqItem.getQuantity();
+          if (food.getAvailableQuantity() < requestedQty) {
+              throw new BadRequestException(
+                  "Insufficient stock for food id=" + food.getId()
+              );
+          }
+
+          BigDecimal unitPrice = food.getPrice();
+          BigDecimal lineTotal = unitPrice.multiply(BigDecimal.valueOf(requestedQty));
+
+          OrderItem item = OrderItem.builder()
+              .order(order)
+              .food(food)
+              .quantity(requestedQty)
+              .unitPrice(unitPrice)
+              .lineTotal(lineTotal)
+              .build();
+
+          order.getItems().add(item);
+          total = total.add(lineTotal);
+
+          // reduce stock
+          food.setAvailableQuantity(food.getAvailableQuantity() - requestedQty);
+          foodRepository.save(food);
+      }
+
+      order.setTotalAmount(total);
+      return orderRepository.save(order); // ✅ RETURN ENTITY
+  }
+  @Override
   @Transactional(readOnly = true)
   public OrderResponse getById(Long id) {
     Order order =

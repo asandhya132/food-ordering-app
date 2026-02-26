@@ -42,7 +42,7 @@ public class RazorpayPaymentService {
     options.put("receipt", "order_" + order.getId());
     options.put("payment_capture", 1);
 
-    com.razorpay.Order razorpayOrder = razorpayClient.Orders.create(new JSONObject(options));
+    com.razorpay.Order razorpayOrder = razorpayClient.orders.create(new JSONObject(options));
     String razorOrderId = razorpayOrder.get("id");
 
     order.setRazorpayOrderId(razorOrderId);
@@ -60,21 +60,19 @@ public class RazorpayPaymentService {
 
   @Transactional
   public void verifyAndMarkPaid(RazorpayVerifyRequest request) throws Exception {
-    Order order =
-        orderRepository
-            .findById(request.getOrderId())
-            .orElseThrow(() -> new NotFoundException("Order not found: id=" + request.getOrderId()));
 
-    // Verify signature
-    Map<String, String> attrs = new HashMap<>();
-    attrs.put("razorpay_order_id", request.getRazorpayOrderId());
-    attrs.put("razorpay_payment_id", request.getRazorpayPaymentId());
-    attrs.put("razorpay_signature", request.getRazorpaySignature());
+    Order order = orderRepository.findById(request.getOrderId())
+        .orElseThrow(() ->
+            new NotFoundException("Order not found: id=" + request.getOrderId()));
 
-    try {
-      // Verify using your Razorpay Key Secret
-      Utils.verifyPaymentSignature(attrs, keySecret);
-    } catch (Exception ex) {
+    JSONObject attributes = new JSONObject();
+    attributes.put("razorpay_order_id", request.getRazorpayOrderId());
+    attributes.put("razorpay_payment_id", request.getRazorpayPaymentId());
+    attributes.put("razorpay_signature", request.getRazorpaySignature());
+
+    boolean isValid = Utils.verifyPaymentSignature(attributes, keySecret);
+
+    if (!isValid) {
       throw new BadRequestException("Invalid Razorpay signature");
     }
 
@@ -82,6 +80,7 @@ public class RazorpayPaymentService {
     order.setRazorpayPaymentId(request.getRazorpayPaymentId());
     order.setRazorpaySignature(request.getRazorpaySignature());
     order.setStatus("PAID");
+
     orderRepository.save(order);
   }
 }
