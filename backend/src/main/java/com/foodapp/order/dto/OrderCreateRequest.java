@@ -18,6 +18,9 @@ public class OrderCreateRequest {
   @Valid
   private List<OrderItemRequest> items;
 
+  @Valid
+  private Customer customer;
+
   @Getter
   @Setter
   @NoArgsConstructor
@@ -31,19 +34,17 @@ public class OrderCreateRequest {
     @Min(1)
     private Integer quantity;
   }
-  // order/dto/OrderCreateRequest.java
-public static class Customer {
-  private String firstName;
-  private String lastName;
-  private String email;
-  private String phone;
-  private String address;
+
+  @Getter
+  @Setter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  public static class Customer {
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String phone;
+    private String address;
+  }
 }
-
-@NotEmpty @Valid
-private List<OrderItemRequest> items;
-
-@Valid
-private Customer customer;
-}
-

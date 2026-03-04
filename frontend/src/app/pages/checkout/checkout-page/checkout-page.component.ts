@@ -141,7 +141,8 @@ export class CheckoutPageComponent implements OnInit {
       error: (err: any) => {
         console.error('Create payment order failed', err);
         this.placing = false;
-        this.error = 'Failed to create payment order. Please try again.';
+        const msg = err?.error?.message;
+        this.error = typeof msg === 'string' && msg ? msg : 'Failed to create payment order. Please try again.';
       }
     });
   }
@@ -176,7 +177,7 @@ export class CheckoutPageComponent implements OnInit {
   private openRazorpayCheckout(order: RazorpayOrderCreateResponse, customer: any): void {
     const options: any = {
       key: order.keyId,
-      amount: order.amount * 100, // paise
+      amount: Math.round(Number(order.amount) * 100), // paise (integer; avoid float)
       currency: order.currency,
       name: 'Food Ordering App',
       description: `Order #${order.orderId}`,
@@ -218,7 +219,8 @@ export class CheckoutPageComponent implements OnInit {
       },
       error: (err: any) => {
         console.error('Payment verification failed', err);
-        this.error = 'Payment verification failed. Please contact support.';
+        const msg = err?.error?.message;
+        this.error = typeof msg === 'string' && msg ? msg : 'Payment verification failed. Please contact support.';
       }
     });
   }

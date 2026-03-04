@@ -4,14 +4,18 @@ import com.foodapp.food.dto.FoodCreateUpdateRequest;
 import com.foodapp.food.dto.FoodResponse;
 import com.foodapp.food.service.FoodService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/foods")
 @RequiredArgsConstructor
+@Validated
 public class FoodController {
 
   private final FoodService foodService;
@@ -28,7 +32,7 @@ public class FoodController {
   }
 
   @GetMapping("/{id}")
-  public FoodResponse getById(@PathVariable Long id) {
+  public FoodResponse getById(@PathVariable @NotNull @Min(1) Long id) {
     return foodService.getById(id);
   }
 
@@ -40,13 +44,14 @@ public class FoodController {
 
   @PutMapping("/{id}")
   public FoodResponse update(
-      @PathVariable Long id, @Valid @RequestBody FoodCreateUpdateRequest request) {
+      @PathVariable @NotNull @Min(1) Long id,
+      @Valid @RequestBody FoodCreateUpdateRequest request) {
     return foodService.update(id, request);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void delete(@PathVariable Long id) {
+  public void delete(@PathVariable @NotNull @Min(1) Long id) {
     foodService.delete(id);
   }
 }
