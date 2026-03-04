@@ -20,3 +20,42 @@
 .popup h4 {
   margin: 0;
 }
+
+/* 3D flip card for food cards */
+.food-card {
+  /* Use same visual style as global .card but add perspective for 3D effect */
+  perspective: 1000px;
+}
+
+.food-card-inner {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.35s ease;
+}
+
+.food-card-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+.food-card-face {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+}
+
+.food-card-front {
+  /* front uses existing .card visual styles from global CSS */
+}
+
+.food-card-back {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 12px;
+  transform: rotateY(180deg);
+}

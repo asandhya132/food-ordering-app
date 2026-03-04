@@ -13,82 +13,110 @@
 </div>
 
 <div class="grid" *ngIf="!loading && !error">
-  <div class="card" *ngFor="let food of foods">
-    <div
-      class="img"
-      [style.backgroundImage]="
-        'url(' + (food.imageUrl || 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=800&q=60') + ')'
-      "
-      (click)="onDetails(food)"
-      style="cursor: pointer"
-    ></div>
-    <div class="content">
-      <div class="row">
-        <div style="font-weight: 700">{{ food.name }}</div>
-        <div class="price">₹{{ getDisplayPrice(food) }}</div>
-      </div>
-      <div class="muted" style="margin-top: 4px">{{ food.category }}</div>
-
-      <div class="row" style="margin-top: 12px; align-items: center">
-        <button class="btn" (click)="onDetails(food)">Details</button>
-
-        <!-- Weight Selection -->
-<div class="d-flex justify-content-center" style="gap: 8px; margin-top: 8px">
-  <button
-    class="btn weight-btn"
-    [class.active]="getSelectedWeight(food) === '250g'"
-    (click)="selectWeight(food, '250g')"
+  <div
+    class="card food-card"
+    *ngFor="let food of foods"
+    (mouseleave)="onCardMouseLeave(food)"
   >
-    250g
-  </button>
-
-  <button
-    class="btn weight-btn"
-    [class.active]="getSelectedWeight(food) === '500g'"
-    (click)="selectWeight(food, '500g')"
-  >
-    500g
-  </button>
-
-  <button
-    class="btn weight-btn"
-    [class.active]="getSelectedWeight(food) === '1kg'"
-    (click)="selectWeight(food, '1kg')"
-  >
-    1kg
-  </button>
-</div>
-
-        <!-- Show Add to Cart if not in cart or quantity is 0 -->
-        <ng-container *ngIf="getQuantity(food) === 0; else qtyControls">
-          <button
-            class="btn primary"
-            (click)="onAdd(food); $event.stopPropagation()"
-           [disabled]="!getSelectedWeight(food) || food.availableQuantity === 0"
-          >
-            Add to Cart
-          </button>
-        </ng-container>
-
-        <!-- Quantity controls when item is already in cart -->
-        <ng-template #qtyControls>
-          <div class="d-flex justify-content-center" style="gap: 8px; align-items: center">
-            <button class="btn" (click)="decrement(food)">-</button>
-            <input
-              class="qty"
-              [value]="getQuantity(food)"
-              readonly
-              aria-label="Quantity"
-            />
-            <button
-              class="btn"
-              (click)="increment(food)"
-              [disabled]="getQuantity(food) >= food.availableQuantity"
-            >
-              +
-            </button>
+    <div class="food-card-inner" [class.flipped]="flippedFoodId === food.id">
+      <!-- FRONT FACE -->
+      <div class="food-card-face food-card-front">
+        <div
+          class="img"
+          [style.backgroundImage]="
+            'url(' + (food.imageUrl || 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=800&q=60') + ')'
+          "
+          (click)="onDetails(food, $event)"
+          style="cursor: pointer"
+        ></div>
+        <div class="content">
+          <div class="row">
+            <div style="font-weight: 700">{{ food.name }}</div>
+            <div class="price">₹{{ getDisplayPrice(food) }}</div>
           </div>
-        </ng-template>
+          <div class="muted" style="margin-top: 4px">{{ food.category }}</div>
+
+          <div class="row" style="margin-top: 12px; align-items: center">
+            <button class="btn" (click)="onDetails(food, $event)">Details</button>
+
+            <!-- Weight Selection -->
+            <div class="d-flex justify-content-center" style="gap: 8px; margin-top: 8px">
+              <button
+                class="btn weight-btn"
+                [class.active]="getSelectedWeight(food) === '250g'"
+                (click)="selectWeight(food, '250g')"
+              >
+                250g
+              </button>
+
+              <button
+                class="btn weight-btn"
+                [class.active]="getSelectedWeight(food) === '500g'"
+                (click)="selectWeight(food, '500g')"
+              >
+                500g
+              </button>
+
+              <button
+                class="btn weight-btn"
+                [class.active]="getSelectedWeight(food) === '1kg'"
+                (click)="selectWeight(food, '1kg')"
+              >
+                1kg
+              </button>
+            </div>
+
+            <!-- Show Add to Cart if not in cart or quantity is 0 -->
+            <ng-container *ngIf="getQuantity(food) === 0; else qtyControls">
+              <button
+                class="btn primary"
+                (click)="onAdd(food); $event.stopPropagation()"
+                [disabled]="!getSelectedWeight(food) || food.availableQuantity === 0"
+              >
+                Add to Cart
+              </button>
+            </ng-container>
+
+            <!-- Quantity controls when item is already in cart -->
+            <ng-template #qtyControls>
+              <div class="d-flex justify-content-center" style="gap: 8px; align-items: center">
+                <button class="btn" (click)="decrement(food)">-</button>
+                <input
+                  class="qty"
+                  [value]="getQuantity(food)"
+                  readonly
+                  aria-label="Quantity"
+                />
+                <button
+                  class="btn"
+                  (click)="increment(food)"
+                  [disabled]="getQuantity(food) >= food.availableQuantity"
+                >
+                  +
+                </button>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <!-- BACK FACE -->
+      <div class="food-card-face food-card-back">
+        <div class="content">
+          <h3 style="margin-top: 0; margin-bottom: 6px">{{ food.name }}</h3>
+          <div class="muted" style="margin-bottom: 8px">
+            Category: {{ food.category }}
+          </div>
+          <div class="muted" style="margin-bottom: 10px" *ngIf="food.description">
+            {{ food.description }}
+          </div>
+          <div class="row">
+            <div class="muted">Price</div>
+            <div class="price">
+              ₹{{ getDisplayPrice(food) }}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

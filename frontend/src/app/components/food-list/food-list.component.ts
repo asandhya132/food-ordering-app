@@ -1,5 +1,13 @@
 // food-list.component.ts
-import { Component, EventEmitter, Input, Output, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  HostListener,
+  Input,
+  Output,
+  OnInit,
+  OnDestroy
+} from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Food, FoodWeight } from '../../models/food.model';
 import { CartService } from '../../services/cart.service';
@@ -34,6 +42,8 @@ lastAddedFoodName = '';
   constructor(private readonly cart: CartService) {}
 
 selectedWeights: Record<number, FoodWeight> = {};
+flippedFoodId: number | null = null;
+
 selectWeight(food: Food, weight: FoodWeight) {
   this.selectedWeights[food.id] = weight;
 }
@@ -82,8 +92,30 @@ private restoredFromCart = false;
   return this.quantities.get(key) ?? 0;
 }
 
-  onDetails(food: Food): void {
-    this.viewDetails.emit(food);
+  onDetails(food: Food, event?: MouseEvent): void {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    this.flippedFoodId = this.flippedFoodId === food.id ? null : food.id;
+  }
+
+  onCardMouseLeave(food: Food): void {
+    if (this.flippedFoodId === food.id) {
+      this.flippedFoodId = null;
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement | null;
+    if (!target) {
+      return;
+    }
+    // If click/tap is outside any food card, reset flip (helps on mobile)
+    if (!target.closest('.food-card')) {
+      this.flippedFoodId = null;
+    }
   }
 
   // Add to cart starts at quantity 1
