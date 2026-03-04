@@ -31,10 +31,25 @@ public class RazorpayPaymentService {
   @Value("${razorpay.key-secret}")
   private String keySecret;
 
+  private static final int MIN_AMOUNT_PAISE = 100; // Razorpay minimum 1 INR
+
   @Transactional
-  public RazorpayOrderCreateResponse createRazorpayOrder(Order order) throws Exception {
+  public RazorpayOrderCreateResponse createRazorpayOrder(Order order) {
     BigDecimal amount = order.getTotalAmount();
-    int amountInPaise = amount.multiply(BigDecimal.valueOf(100)).intValueExact();
+    if (amount == null || amount.compareTo(BigDecimal.ONE) < 0) {
+      throw new BadRequestException(
+          "Order amount must be at least 1 INR for Razorpay. Got: " + amount);
+    }
+    int amountInPaise;
+    try {
+      amountInPaise = amount.multiply(BigDecimal.valueOf(100)).intValueExact();
+    } catch (ArithmeticException e) {
+      throw new BadRequestException("Order amount must have at most 2 decimal places: " + amount);
+    }
+    if (amountInPaise < MIN_AMOUNT_PAISE) {
+      throw new BadRequestException(
+          "Order amount must be at least 1 INR (100 paise). Got: " + amountInPaise + " paise");
+    }
 
     Map<String, Object> options = new HashMap<>();
     options.put("amount", amountInPaise);
@@ -42,20 +57,28 @@ public class RazorpayPaymentService {
     options.put("receipt", "order_" + order.getId());
     options.put("payment_capture", 1);
 
-    com.razorpay.Order razorpayOrder = razorpayClient.orders.create(new JSONObject(options));
-    String razorOrderId = razorpayOrder.get("id");
+    try {
+      com.razorpay.Order razorpayOrder = razorpayClient.orders.create(new JSONObject(options));
+      String razorOrderId = razorpayOrder.get("id");
 
-    order.setRazorpayOrderId(razorOrderId);
-    order.setStatus("CREATED");
-    orderRepository.save(order);
+      order.setRazorpayOrderId(razorOrderId);
+      order.setStatus("CREATED");
+      orderRepository.save(order);
 
-    return RazorpayOrderCreateResponse.builder()
-        .orderId(order.getId())
-        .razorpayOrderId(razorOrderId)
-        .amount(amount)
-        .currency("INR")
-        .keyId(keyId)
-        .build();
+      if (keyId == null || keyId.isBlank()) {
+        throw new IllegalStateException("Razorpay key-id is not configured");
+      }
+      return RazorpayOrderCreateResponse.builder()
+          .orderId(order.getId())
+          .razorpayOrderId(razorOrderId)
+          .amount(amount)
+          .currency("INR")
+          .keyId(keyId)
+          .build();
+    } catch (Exception e) {
+      throw new BadRequestException(
+          "Razorpay order creation failed: " + (e.getMessage() != null ? e.getMessage() : e.toString()));
+    }
   }
 
   @Transactional

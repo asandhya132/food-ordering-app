@@ -96,12 +96,21 @@ Order order = Order.builder()
       BigDecimal total = BigDecimal.ZERO;
 
       for (OrderCreateRequest.OrderItemRequest reqItem : request.getItems()) {
+          if (reqItem == null || reqItem.getFoodId() == null || reqItem.getQuantity() == null) {
+              throw new BadRequestException("Each order item must have foodId and quantity");
+          }
 
           Food food = foodRepository.findById(reqItem.getFoodId())
               .orElseThrow(() ->
                   new NotFoundException("Food not found: id=" + reqItem.getFoodId())
               );
 
+          if (food.getPrice() == null) {
+              throw new BadRequestException("Food id=" + food.getId() + " has no price set");
+          }
+          if (food.getAvailableQuantity() == null) {
+              throw new BadRequestException("Food id=" + food.getId() + " has no stock quantity set");
+          }
           int requestedQty = reqItem.getQuantity();
           if (food.getAvailableQuantity() < requestedQty) {
               throw new BadRequestException(
